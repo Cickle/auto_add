@@ -1,5 +1,8 @@
 // let username = '';
 const classID = $("[name='ClassID']");
+const countDiv = $('#_add').next();
+let count = parseInt(countDiv.text().substring(5));
+
 
 function injectCustomJs(jsPath) {
 	// debugger;
@@ -49,41 +52,59 @@ $(() => {
 	}
 })
 window.addEventListener("message", function (e) {
-	if ($("#auto_add_btn_text").text()==='自动添加') {
+	if ($("#auto_add_btn_text").text() === '自动添加') {
 		$("#auto_add_btn_text").text('停止添加')
-		chrome.runtime.sendMessage({
-			method: 'get_article',
-			date: getLastDay().substr(0,7)
-		}, function (response) {
-			if (response.status === 1) {
-				console.debug(response)
-			}else{
-				alert(response.msg)
-				$("#auto_add_btn_text").text('自动添加')
-			}
-			// $.post("/uycyw/SupplyAndDemand/save.jsp", {
-			// 	"ClassID": classID[0].getAttribute('value'),
-			// 	"id": "",
-			// 	"sw": "",
-			// 	"p": "",
-			// 	"UnitNo": "",
-			// 	"TITLE": response.title,
-			// 	"TEL": "",
-			// 	"EMAIL": "",
-			// 	"ADDRESS": "",
-			// 	"ID": "",
-			// 	"ENDTIME": getLastDay(),
-			// 	"IMAGEPATH": "",
-			// 	"USERTYPE": "1",
-			// 	"Content": response.Content,
-			// }, (result) => {
-			// 	console.debug(result)
-			// })
-		});
-	}else{
+		getArticle();
+	} else {
 		$("#auto_add_btn_text").text('自动添加')
 	}
 }, false);
+function getArticle() {
+	if ($("#auto_add_btn_text").text() === '自动添加') {
+		return false;
+	}
+	chrome.runtime.sendMessage({
+		method: 'get_article',
+		date: getLastDay().substr(0, 7)
+	}, function (response) {
+		if (response.status === 1) {
+			saveArticle(response);
+		} else {
+			alert(response.msg)
+			$("#auto_add_btn_text").text('自动添加')
+		}
+	});
+}
+function saveArticle(response) {
+	$.post("/uycyw/SupplyAndDemand/save.jsp", {
+		"ClassID": classID[0].getAttribute('value'),
+		"id": "",
+		"sw": "",
+		"p": "",
+		"UnitNo": "",
+		"TITLE": response.title,
+		"TEL": "",
+		"EMAIL": "",
+		"ADDRESS": "",
+		"ID": "",
+		"ENDTIME": getLastDay(),
+		"IMAGEPATH": "",
+		"USERTYPE": "1",
+		"Content": response.Content,
+	}, (result) => {
+		console.debug(result)
+		if (result.indexOf('保存信息') === 41) {
+			count++;
+			countDiv.text('今日数量：' + count)
+			getArticle()
+		}
+
+	}).fail((error) => {
+		console.debug(error);
+		$("#auto_add_btn_text").text('自动添加')
+	})
+
+}
 
 function getLastDay() {
 	const now = new Date();

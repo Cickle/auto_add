@@ -52,7 +52,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, callback) {
                 result.status=1;
                 callback(result);
             }).fail((error) => {
-                error.msg = '查询信息失败:' + username + ';date:' + request.date+';error:'+error.responseText;
+                error.msg = '查询信息失败:' + username + ';date:' + request.date+';error:'+(error.responseText?error.responseText:'未知错误');
                 callback(error);
                 console.debug(error);
 
