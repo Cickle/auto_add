@@ -44,20 +44,26 @@ chrome.webRequest.onBeforeRequest.addListener((details) => {
 //     console.debug(details)
 // }, { urls: ['http://jcpt.chengdu.gov.cn/cdform/cdmanage/login/login.htm'] })
 
-$.ajaxSettings.async = false
+// $.ajaxSettings.async = false
 chrome.runtime.onMessage.addListener(function (request, sender, callback) {
     if (request.method === 'get_article') {
         if (username !== '' && request.date !== '') {
-            $.post("http://localhost:8000/get_article", { "username": sender.frameId, "date": request.date }, (result) => {
-                result.status = 1;
-                callback(result);
+            $.post("http://cickle.top:8000/get_article", { "username": username+'!', "date": request.date }, (result) => {
+                if(!result.title){
+                    result.status = 1;
+                    callback(result);
+                }else{
+                    result.status = 2;
+                    result.msg = '所有信息都保存完了！';
+                    callback(result)
+                }
             }).fail((error) => {
                 error.msg = '查询信息失败:' + username + ';date:' + request.date + ';error:' + (error.responseText ? error.responseText : '未知错误');
                 callback(error);
                 console.debug(error);
 
             })
-            console.debug(sender)
+            // console.debug(sender)
         } else {
             callback({ status: 0, msg: '获取参数失败-username:' + username + ';date:' + request.date });
             console.debug('获取参数失败-username:' + username + ';date:' + request.date)

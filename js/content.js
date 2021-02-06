@@ -76,37 +76,10 @@ function getArticle() {
 	});
 }
 function saveArticle(response) {
-	$.get("http://jcpt.chengdu.gov.cn/cdform/", {
-	}, (result) => {
-		console.debug(result)
-		if (result.indexOf('保存信息') === -1) {
-			count++;
-			countDiv.text('今日数量：' + count)
-			getArticle()
-		}
-
-	}).fail((error) => {
-		console.debug(error);
-		$("#auto_add_btn_text").text('自动添加')
-	})
-	// $.post("/uycyw/SupplyAndDemand/save.jsp", {
-	// 	"ClassID": classID[0].getAttribute('value'),
-	// 	"id": "",
-	// 	"sw": "",
-	// 	"p": "",
-	// 	"UnitNo": "",
-	// 	"TITLE": response.title,
-	// 	"TEL": "",
-	// 	"EMAIL": "",
-	// 	"ADDRESS": "",
-	// 	"ID": "",
-	// 	"ENDTIME": getLastDay(),
-	// 	"IMAGEPATH": "",
-	// 	"USERTYPE": "1",
-	// 	"Content": response.Content,
+	// $.get("http://jcpt.chengdu.gov.cn/cdform/", {
 	// }, (result) => {
 	// 	console.debug(result)
-	// 	if (result.indexOf('保存信息') === 41) {
+	// 	if (result.indexOf('保存信息') === -1) {
 	// 		count++;
 	// 		countDiv.text('今日数量：' + count)
 	// 		getArticle()
@@ -116,6 +89,36 @@ function saveArticle(response) {
 	// 	console.debug(error);
 	// 	$("#auto_add_btn_text").text('自动添加')
 	// })
+	$.post("/uycyw/SupplyAndDemand/save.jsp", {
+		"ClassID": classID[0].getAttribute('value'),
+		"id": "",
+		"sw": "",
+		"p": "",
+		"UnitNo": "",
+		"TITLE": response.title,
+		"TEL": "",
+		"EMAIL": "",
+		"ADDRESS": "",
+		"ID": "",
+		"ENDTIME": getLastDay(),
+		"IMAGEPATH": "",
+		"USERTYPE": "1",
+		"Content": response.Content,
+	}, (result) => {
+		// console.debug(result)
+		if (result.indexOf('保存信息') === 41) {
+			count++;
+			countDiv.text('今日数量：' + count)
+			getArticle()
+		} else {
+			alert('保存失败：请尝试重新登录页面！')
+			$("#auto_add_btn_text").text('自动添加')
+		}
+	}).fail((error) => {
+		alert('保存失败：' + response.title)
+		console.debug(error)
+		$("#auto_add_btn_text").text('自动添加')
+	})
 
 }
 
