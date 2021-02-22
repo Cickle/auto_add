@@ -20,7 +20,8 @@
     "permissions": [
         "webRequest",
         "webRequestBlocking",
-        // "*://jcpt.chengdu.gov.cn/*",
+        "*://jcpt.chengdu.gov.cn/*",
+        "http://localhost:8000/get_article*",
         "http://cickle.top:8000/get_article*"
     ],
     "background": {

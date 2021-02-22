@@ -68,7 +68,12 @@ function getArticle() {
 		date: getLastDay().substr(0, 7)
 	}, function (response) {
 		if (response.status === 1) {
-			saveArticle(response);
+			if (response.title) {
+				saveArticle(response);
+			} else {
+				alert('已保存完所有数据或未找到数据！')
+			}
+
 		} else {
 			alert(response.msg)
 			$("#auto_add_btn_text").text('自动添加')
@@ -110,13 +115,10 @@ function saveArticle(response) {
 			count++;
 			countDiv.text('今日数量：' + count)
 			getArticle()
-		} else {
-			alert('保存失败：请尝试重新登录页面！')
-			$("#auto_add_btn_text").text('自动添加')
 		}
+
 	}).fail((error) => {
-		alert('保存失败：' + response.title)
-		console.debug(error)
+		console.debug(error);
 		$("#auto_add_btn_text").text('自动添加')
 	})
 
